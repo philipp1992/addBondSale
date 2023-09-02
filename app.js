@@ -66,7 +66,7 @@ function bondSaleAdd() {
     })
     .on('error', function(error, receipt) { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
         console.log('Error:', error.message);
-        document.getElementById('error').textContent = `Transaction failed! Error: ${error.message}`;
+        document.getElementById('error').textContent = `Transaction failed! Error: ${error}`;
     })
     } catch (error) {
         document.getElementById('error').textContent = `Transaction failed! Error: ${error}`;

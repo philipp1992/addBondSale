@@ -1,49 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Bond Sale</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.2.9/dist/web3.min.js"></script>
 </head>
+
 <body>
-    <h2>Bond Sale Add</h2>
 
-    <div>
-        <label for="quoteToken">Quote Token Address:</label>
-        <select id="assetDropdown">
-            <option value="DAI">DAI</option>
-            <option value="USDT">USDT</option>
-            <option value="USDC">USDC</option>
-            <option value="ARB">ARB</option>
-            <option value="WETH">WETH</option>
-        </select>
-        <input type="hidden" id="quoteToken">
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Bond Sale Add</h2>
+        <div class="row">
+            <div class="col-lg-6 mx-auto">
+                <div class="card p-4 shadow-sm">
+                    <form>
+                        <div class="form-group">
+                            <label for="quoteToken">Quote Token Address:</label>
+                            <select class="form-control" id="assetDropdown">
+                                <option value="DAI">DAI</option>
+                                <option value="USDT">USDT</option>
+                                <option value="USDC">USDC</option>
+                                <option value="ARB">ARB</option>
+                                <option value="WETH">WETH</option>
+                            </select>
+                            <input type="hidden" id="quoteToken">
+                        </div>
+                        <div class="form-group">
+                            <label for="price">Price in Quote Asset (.e.g 0.12 for 0.12 USDC):</label>
+                            <input type="text" class="form-control" id="price" placeholder="Enter the Price">
+                        </div>
+                        <div class="form-group">
+                            <label for="duration">Duration in days:</label>
+                            <input type="text" class="form-control" id="duration" placeholder="Enter the Duration">
+                        </div>
+                        <div class="form-group">
+                            <label for="volume">Volume in HDN .e.g 1000 = 1000 HDN:</label>
+                            <input type="text" class="form-control" id="volume" placeholder="Enter the Volume">
+                        </div>
+                        <button type="button" class="btn btn-primary btn-block" onclick="bondSaleAdd()">Add Bond Sale</button>
+                    </form>
+
+                    <div class="mt-4" id="txResult">
+                        <p>Transaction Hash: <a id="txLink" target="_blank" href="#">N/A</a></p>
+                    </div>
+
+                    <div class="mt-2 text-success" id="confirmation"></div>
+                    <div class="mt-2 text-danger" id="error"></div>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div>
-        <label for="price">Price in Quote Asset (.e.g 0.12 for 0.12 USDC):</label>
-        <input type="text" id="price" placeholder="Enter the Price">
-    </div>
-
-    <div>
-        <label for="duration">Duration in days:</label>
-        <input type="text" id="duration" placeholder="Enter the Duration">
-    </div>
-
-    <div>
-        <label for="volume">Volume in HDN .e.g 1000 = 1000 HDN:</label>
-        <input type="text" id="volume" placeholder="Enter the Volume">
-    </div>
-
-    <button onclick="bondSaleAdd()">Add Bond Sale</button>
-
-    <div id="txResult">
-        <p>Transaction Hash: <a id="txLink" target="_blank" href="#">N/A</a></p>
-    </div>
-    
-    <div id="confirmation" style="color: green;"></div>
-    <div id="error" style="color: red;"></div>
 
     <script src="app.js"></script>
 </body>
+
 </html>
