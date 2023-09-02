@@ -11,6 +11,27 @@
 <body>
 
     <div class="container mt-5">
+        <h2 class="text-center mb-4">Bond Sale New</h2>
+        <div class="row">
+            <div class="col-lg-6 mx-auto">
+                <div class="card p-4 shadow-sm">
+                    <form>
+                       
+                        <button type="button" class="btn btn-primary btn-block" onclick="bondSaleNew()">New Bond Sale</button>
+                    </form>
+
+                    <div class="mt-4" id="txResult-new">
+                        <p>Transaction Hash: <a id="txLink" target="_blank" href="#">N/A</a></p>
+                    </div>
+
+                    <div class="mt-2 text-success" id="confirmation-new"></div>
+                    <div class="mt-2 text-danger" id="error-new"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5">
         <h2 class="text-center mb-4">Bond Sale Add</h2>
         <div class="row">
             <div class="col-lg-6 mx-auto">
@@ -42,12 +63,54 @@
                         <button type="button" class="btn btn-primary btn-block" onclick="bondSaleAdd()">Add Bond Sale</button>
                     </form>
 
-                    <div class="mt-4" id="txResult">
+                    <div class="mt-4" id="txResult-add">
                         <p>Transaction Hash: <a id="txLink" target="_blank" href="#">N/A</a></p>
                     </div>
 
-                    <div class="mt-2 text-success" id="confirmation"></div>
-                    <div class="mt-2 text-danger" id="error"></div>
+                    <div class="mt-2 text-success" id="confirmation-add"></div>
+                    <div class="mt-2 text-danger" id="error-add"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Bond Sale Start</h2>
+        <div class="row">
+            <div class="col-lg-6 mx-auto">
+                <div class="card p-4 shadow-sm">
+                    <form>
+                       
+                        <button type="button" class="btn btn-primary btn-block" onclick="bondSaleStart()">New Bond Sale</button>
+                    </form>
+
+                    <div class="mt-4" id="txResult-start">
+                        <p>Transaction Hash: <a id="txLink-start" target="_blank" href="#">N/A</a></p>
+                    </div>
+
+                    <div class="mt-2 text-success" id="confirmation-start"></div>
+                    <div class="mt-2 text-danger" id="error-start"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Bond Sale Close</h2>
+        <div class="row">
+            <div class="col-lg-6 mx-auto">
+                <div class="card p-4 shadow-sm">
+                    <form>
+                       
+                        <button type="button" class="btn btn-primary btn-block" onclick="bondSaleClose()">Close Bond Sale</button>
+                    </form>
+
+                    <div class="mt-4" id="txResult-close">
+                        <p>Transaction Hash: <a id="txLink-close" target="_blank" href="#">N/A</a></p>
+                    </div>
+
+                    <div class="mt-2 text-success" id="confirmation-close"></div>
+                    <div class="mt-2 text-danger" id="error-close"></div>
                 </div>
             </div>
         </div>

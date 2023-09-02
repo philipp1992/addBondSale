@@ -57,19 +57,98 @@ function bondSaleAdd() {
         contract.methods.bondSaleAdd(quoteTokenAddress, price, duration, volume).send({ from: account })
     .on('transactionHash', function(hash) {
         console.log('Transaction Hash:', hash);
-        document.getElementById('txLink').textContent = hash;
-        document.getElementById('txLink').href = 'https://arbiscan.io/tx/' + hash;
+        document.getElementById('txLink-add').textContent = hash;
+        document.getElementById('txLink-add').href = 'https://arbiscan.io/tx/' + hash;
     })
     .on('confirmation', function(confirmationNumber, receipt) {
         console.log('Confirmation Number:', confirmationNumber);
-        document.getElementById('confirmation').textContent = `Transaction confirmed with confirmation number: ${confirmationNumber}`;
+        document.getElementById('confirmation-add').textContent = `Transaction confirmed with confirmation number: ${confirmationNumber}`;
     })
     .on('error', function(error, receipt) { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
         console.log('Error:', error.message);
-        document.getElementById('error').textContent = `Transaction failed! Error: ${error}`;
+        document.getElementById('error-add').textContent = `Transaction failed! Error: ${error}`;
     })
     } catch (error) {
-        document.getElementById('error').textContent = `Transaction failed! Error: ${error}`;
+        document.getElementById('error-add').textContent = `Transaction failed! Error: ${error}`;
+    }
+
+    
+}
+
+
+function bondSaleNew() {
+    try {
+
+
+
+        contract.methods.bondSaleNew().send({ from: account })
+    .on('transactionHash', function(hash) {
+        console.log('Transaction Hash:', hash);
+        document.getElementById('txLink-new').textContent = hash;
+        document.getElementById('txLink-new').href = 'https://arbiscan.io/tx/' + hash;
+    })
+    .on('confirmation', function(confirmationNumber, receipt) {
+        console.log('Confirmation Number:', confirmationNumber);
+        document.getElementById('confirmation-new').textContent = `Transaction confirmed with confirmation number: ${confirmationNumber}`;
+    })
+    .on('error', function(error, receipt) { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
+        console.log('Error:', error.message);
+        document.getElementById('error-new').textContent = `Transaction failed! Error: ${error}`;
+    })
+    } catch (error) {
+        document.getElementById('error-new').textContent = `Transaction failed! Error: ${error}`;
+    }
+
+    
+}
+
+function bondSaleStart() {
+    try {
+
+
+
+        contract.methods.bondSaleStart().send({ from: account })
+    .on('transactionHash', function(hash) {
+        console.log('Transaction Hash:', hash);
+        document.getElementById('txLink-start').textContent = hash;
+        document.getElementById('txLink-start').href = 'https://arbiscan.io/tx/' + hash;
+    })
+    .on('confirmation', function(confirmationNumber, receipt) {
+        console.log('Confirmation Number:', confirmationNumber);
+        document.getElementById('confirmation-start').textContent = `Transaction confirmed with confirmation number: ${confirmationNumber}`;
+    })
+    .on('error', function(error, receipt) { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
+        console.log('Error:', error.message);
+        document.getElementById('error-start').textContent = `Transaction failed! Error: ${error}`;
+    })
+    } catch (error) {
+        document.getElementById('error-start').textContent = `Transaction failed! Error: ${error}`;
+    }
+
+    
+}
+
+function bondSaleClose() {
+    try {
+
+
+
+        contract.methods.bondSaleClose().send({ from: account })
+    .on('transactionHash', function(hash) {
+        console.log('Transaction Hash:', hash);
+        document.getElementById('txLink-close').textContent = hash;
+        document.getElementById('txLink-close').href = 'https://arbiscan.io/tx/' + hash;
+    })
+    .on('confirmation', function(confirmationNumber, receipt) {
+        console.log('Confirmation Number:', confirmationNumber);
+        document.getElementById('confirmation-close').textContent = `Transaction confirmed with confirmation number: ${confirmationNumber}`;
+    })
+    .on('error', function(error, receipt) { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
+        console.log('Error:', error.message);
+        document.getElementById('error-close').textContent = `Transaction failed! Error: ${error}`;
+    })
+    } catch (error) {
+        document.getElementById('error-close').textContent = `Transaction failed! Error: ${error}`;
     }
 
     
