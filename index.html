@@ -23,14 +23,36 @@
                     <th>Price</th>
                     <th>Duration</th>
                     <th>Volume</th>
-                    <th>Status</th>
+                    <th>Sold</th>
                 </tr>
             </thead>
-            <tbody id="bondsTableBody">
+            <tbody id="activeBondsTableBody">
                 <!-- Active Bonds will be rendered here -->
             </tbody>
         </table>
     </div>
+
+    
+
+    <h3 class="text-center mb-4">Prepared Bonds (added but not started)</h3>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Contract Address</th>
+                    <th>Price</th>
+                    <th>Duration</th>
+                    <th>Volume</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="stagingBondsTableBody">
+                <!-- Active Bonds will be rendered here -->
+            </tbody>
+        </table>
+    </div>
+
     <div class="container mt-5 ">
         <h2 class="text-center mb-4">Bond Sale New</h2>
         <div class="row">
@@ -42,7 +64,7 @@
                     </form>
 
                     <div class="mt-4" id="txResult-new">
-                        <p>Transaction Hash: <a id="txLink" target="_blank" href="#">N/A</a></p>
+                        <p>Transaction Hash: <a id="txLink-new" target="_blank" href="#">N/A</a></p>
                     </div>
 
                     <div class="mt-2 text-success" id="confirmation-new"></div>
@@ -86,7 +108,7 @@
                     </form>
 
                     <div class="mt-4" id="txResult-add">
-                        <p>Transaction Hash: <a id="txLink" target="_blank" href="#">N/A</a></p>
+                        <p>Transaction Hash: <a id="txLink-add" target="_blank" href="#">N/A</a></p>
                     </div>
 
                     <div class="mt-2 text-success" id="confirmation-add"></div>

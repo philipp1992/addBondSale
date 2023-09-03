@@ -170,7 +170,7 @@ function bondSaleClose() {
 
 document.addEventListener("DOMContentLoaded", async function() {
     const bonds = await fetchActiveBonds();
-    renderBonds(bonds);
+    renderActiveBonds(bonds);
 });
 
 function fromWei(value, decimals = 18) {
@@ -181,13 +181,13 @@ function fromWei(value, decimals = 18) {
 function secondsToDays(seconds) {
     return seconds / (24 * 60 * 60);
 }
-function renderBonds(bonds) {
-    const tbody = document.getElementById('bondsTableBody');
+function renderActiveBonds(bonds) {
+    const tbody = document.getElementById('activeBondsTableBody');
 
     bonds.forEach(bond => {
         const tr = document.createElement('tr');
 
-        // Assuming the structure [Bond ID, Contract Address, Price, Duration, Volume, Status]
+        // Assuming the structure [Bond ID, Contract Address, Price, Duration, Volume, Sold]
         bond.forEach((item, index) => {
             const td = document.createElement('td');
             
@@ -216,7 +216,7 @@ function renderBonds(bonds) {
             }
             // For all other items
             else {
-                td.textContent = item;
+                td.textContent = fromWei(item);
             }
 
             tr.appendChild(td);
