@@ -29,164 +29,6 @@ const tokenDecimals = {
     'WETH': 18
 };
 
-
-function secondsToDays(seconds) {
-    return seconds / (24 * 60 * 60);
-}
-
-async function fetchActiveBonds() {
-    try {
-        const bonds = await contract.methods.activeMarkets().call();
-        return bonds;
-    } catch (error) {
-        console.error("Error fetching bonds:", error);
-        return [];
-    }
-}
-function bondSaleAdd() {
-    try {
-    const selectedAsset = document.getElementById('assetDropdown').value;
-    const quoteTokenAddress = tokenAddresses[selectedAsset];
-    document.getElementById('quoteToken').value = quoteTokenAddress;
-
-    let volume = document.getElementById('volume').value;
-    volume = web3.utils.toWei(volume, 'ether');  // Convert volume to 18 decimals
-
-
-    let price = document.getElementById('price').value;
-    price = web3.utils.toWei(price, 'ether'); 
-    price = new web3.utils.BN(price).div(new web3.utils.BN(Math.pow(10, 18 - tokenDecimals[selectedAsset]))).toString();
-
-
-    let durationDays = document.getElementById('durationDays').value;
-    durationDays = durationDays * 24 * 60 * 60; 
-    if (durationDays === '') {
-        durationDays = 0;
-    }
-
-    let durationSeconds = document.getElementById('durationSeconds').value;
-    if (durationSeconds === '') {
-        durationSeconds = 0;
-    }
-    
-    let duration = Number(durationDays)+ Number(durationSeconds);
-
-    if (duration === 0) {
-        throw new Error('Duration must be greater than 0');
-    }
-
-    console.log('quoteTokenAddress:', quoteTokenAddress);
-    console.log('volume:', volume);
-    console.log('price:', price);
-    console.log('duration:', duration);
-
-
-
-        contract.methods.bondSaleAdd(quoteTokenAddress, price, duration, volume).send({ from: account })
-    .on('transactionHash', function(hash) {
-        console.log('Transaction Hash:', hash);
-        document.getElementById('txLink-add').textContent = hash;
-        document.getElementById('txLink-add').href = 'https://arbiscan.io/tx/' + hash;
-    })
-    .on('confirmation', function(confirmationNumber, receipt) {
-        console.log('Confirmation Number:', confirmationNumber);
-        document.getElementById('confirmation-add').textContent = `Transaction confirmed with confirmation number: ${confirmationNumber}`;
-    })
-    .on('error', function(error, receipt) { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
-        console.log('Error:', error.message);
-        document.getElementById('error-add').textContent = `Transaction failed! Error: ${error}`;
-    })
-    } catch (error) {
-        document.getElementById('error-add').textContent = `Transaction failed! Error: ${error}`;
-    }
-
-    
-}
-
-
-function bondSaleNew() {
-    try {
-
-
-
-        contract.methods.bondSaleNew().send({ from: account })
-    .on('transactionHash', function(hash) {
-        console.log('Transaction Hash:', hash);
-        document.getElementById('txLink-new').textContent = hash;
-        document.getElementById('txLink-new').href = 'https://arbiscan.io/tx/' + hash;
-    })
-    .on('confirmation', function(confirmationNumber, receipt) {
-        console.log('Confirmation Number:', confirmationNumber);
-        document.getElementById('confirmation-new').textContent = `Transaction confirmed with confirmation number: ${confirmationNumber}`;
-    })
-    .on('error', function(error, receipt) { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
-        console.log('Error:', error.message);
-        document.getElementById('error-new').textContent = `Transaction failed! Error: ${error}`;
-    })
-    } catch (error) {
-        document.getElementById('error-new').textContent = `Transaction failed! Error: ${error}`;
-    }
-
-    
-}
-
-function bondSaleStart() {
-    try {
-
-
-
-        contract.methods.bondSaleStart().send({ from: account })
-    .on('transactionHash', function(hash) {
-        console.log('Transaction Hash:', hash);
-        document.getElementById('txLink-start').textContent = hash;
-        document.getElementById('txLink-start').href = 'https://arbiscan.io/tx/' + hash;
-    })
-    .on('confirmation', function(confirmationNumber, receipt) {
-        console.log('Confirmation Number:', confirmationNumber);
-        document.getElementById('confirmation-start').textContent = `Transaction confirmed with confirmation number: ${confirmationNumber}`;
-    })
-    .on('error', function(error, receipt) { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
-        console.log('Error:', error.message);
-        document.getElementById('error-start').textContent = `Transaction failed! Error: ${error}`;
-    })
-    } catch (error) {
-        document.getElementById('error-start').textContent = `Transaction failed! Error: ${error}`;
-    }
-
-    
-}
-
-function bondSaleClose() {
-    try {
-
-
-
-        contract.methods.bondSaleClose().send({ from: account })
-    .on('transactionHash', function(hash) {
-        console.log('Transaction Hash:', hash);
-        document.getElementById('txLink-close').textContent = hash;
-        document.getElementById('txLink-close').href = 'https://arbiscan.io/tx/' + hash;
-    })
-    .on('confirmation', function(confirmationNumber, receipt) {
-        console.log('Confirmation Number:', confirmationNumber);
-        document.getElementById('confirmation-close').textContent = `Transaction confirmed with confirmation number: ${confirmationNumber}`;
-    })
-    .on('error', function(error, receipt) { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
-        console.log('Error:', error.message);
-        document.getElementById('error-close').textContent = `Transaction failed! Error: ${error}`;
-    })
-    } catch (error) {
-        document.getElementById('error-close').textContent = `Transaction failed! Error: ${error}`;
-    }
-
-    
-}
-
-document.addEventListener("DOMContentLoaded", async function() {
-    const bonds = await fetchActiveBonds();
-    renderActiveBonds(bonds);
-});
-
 function fromWei(value, decimals = 18) {
     return value / (10 ** decimals);
 }
@@ -239,3 +81,230 @@ function renderActiveBonds(bonds) {
         tbody.appendChild(tr);
     });
 }
+
+function renderInactiveBonds(bonds) {
+    const tbody = document.getElementById('stagingBondsTableBody');
+
+    bonds.forEach(bond => {
+        const tr = document.createElement('tr');
+
+        // Assuming the structure [Bond ID, Contract Address, Price, Duration, Volume, Sold]
+        bond.forEach((item, index) => {
+            const td = document.createElement('td');
+            
+            // For Contract Address (index 1)
+            if (index === 1 && typeof item === 'string' && item.startsWith('0x')) {
+                const tokenName = Object.keys(tokenAddresses).find(key => tokenAddresses[key] === item);
+                const a = document.createElement('a');
+                a.href = `https://arbiscan.io/address/${item}`;
+                a.target = "_blank";
+                a.textContent = tokenName || item; // Show the token name if found, otherwise show the address
+                td.appendChild(a);
+            }
+            // For Price (index 2)
+            else if (index === 2) {
+                const tokenName = Object.keys(tokenAddresses).find(key => tokenAddresses[key] === bond[1]); // Find the associated token for this bond
+                const decimals = tokenDecimals[tokenName];
+                td.textContent = fromWei(item, decimals);
+            }
+            // For Duration (index 3)
+            else if (index === 3) {
+                td.textContent = `${secondsToDays(item)} days`;
+            }
+            // For Volume (index 4)
+            else if (index === 4) {
+                td.textContent = fromWei(item); // Default to 18 decimals if not provided
+            }
+            // For all other items
+            else {
+                td.textContent = fromWei(item);
+            }
+
+            tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+    });
+}
+function secondsToDays(seconds) {
+    return seconds / (24 * 60 * 60);
+}
+
+async function fetchActiveBonds() {
+    try {
+        const bonds = await contract.methods.activeMarkets().call();
+        return bonds;
+    } catch (error) {
+        console.error("Error fetching bonds:", error);
+        return [];
+    }
+}
+
+
+async function fetchInactiveBonds() {
+    try {
+        const bonds = await contract.methods.bondSaleViewStaging().call();
+        return bonds;
+    } catch (error) {
+        console.error("Error fetching bonds:", error);
+        return [];
+    }
+}
+
+async function fetchAndRenderBonds() {
+    const activeBonds = await fetchActiveBonds();
+    renderActiveBonds(activeBonds);
+    const inactiveBonds = await fetchInactiveBonds();
+    renderInactiveBonds(inactiveBonds);
+}
+
+function bondSaleAdd() {
+    try {
+    const selectedAsset = document.getElementById('assetDropdown').value;
+    const quoteTokenAddress = tokenAddresses[selectedAsset];
+    document.getElementById('quoteToken').value = quoteTokenAddress;
+
+    let volume = document.getElementById('volume').value;
+    volume = web3.utils.toWei(volume, 'ether');  // Convert volume to 18 decimals
+
+
+    let price = document.getElementById('price').value;
+    price = web3.utils.toWei(price, 'ether'); 
+    price = new web3.utils.BN(price).div(new web3.utils.BN(Math.pow(10, 18 - tokenDecimals[selectedAsset]))).toString();
+
+
+    let durationDays = document.getElementById('durationDays').value;
+    durationDays = durationDays * 24 * 60 * 60; 
+    if (durationDays === '') {
+        durationDays = 0;
+    }
+
+    let durationSeconds = document.getElementById('durationSeconds').value;
+    if (durationSeconds === '') {
+        durationSeconds = 0;
+    }
+    
+    let duration = Number(durationDays)+ Number(durationSeconds);
+
+    if (duration === 0) {
+        throw new Error('Duration must be greater than 0');
+    }
+
+    console.log('quoteTokenAddress:', quoteTokenAddress);
+    console.log('volume:', volume);
+    console.log('price:', price);
+    console.log('duration:', duration);
+
+
+
+        contract.methods.bondSaleAdd(quoteTokenAddress, price, duration, volume).send({ from: account })
+    .on('transactionHash', function(hash) {
+        console.log('Transaction Hash:', hash);
+        document.getElementById('txLink-add').textContent = hash;
+        document.getElementById('txLink-add').href = 'https://arbiscan.io/tx/' + hash;
+    })
+    .on('confirmation', function(confirmationNumber, receipt) {
+        console.log('Confirmation Number:', confirmationNumber);
+        document.getElementById('confirmation-add').textContent = `Transaction confirmed with confirmation number: ${confirmationNumber}`;
+        fetchAndRenderBonds().then(() => {});
+
+    })
+    .on('error', function(error, receipt) { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
+        console.log('Error:', error.message);
+        document.getElementById('error-add').textContent = `Transaction failed! Error: ${error}`;
+    })
+    } catch (error) {
+        document.getElementById('error-add').textContent = `Transaction failed! Error: ${error}`;
+    }
+
+    
+}
+
+
+function bondSaleNew() {
+    try {
+
+
+
+        contract.methods.bondSaleNew().send({ from: account })
+    .on('transactionHash', function(hash) {
+        console.log('Transaction Hash:', hash);
+        document.getElementById('txLink-new').textContent = hash;
+        document.getElementById('txLink-new').href = 'https://arbiscan.io/tx/' + hash;
+    })
+    .on('confirmation', function(confirmationNumber, receipt) {
+        console.log('Confirmation Number:', confirmationNumber);
+        document.getElementById('confirmation-new').textContent = `Transaction confirmed with confirmation number: ${confirmationNumber}`;
+        fetchAndRenderBonds().then(() => {});
+    })
+    .on('error', function(error, receipt) { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
+        console.log('Error:', error.message);
+        document.getElementById('error-new').textContent = `Transaction failed! Error: ${error}`;
+    })
+    } catch (error) {
+        document.getElementById('error-new').textContent = `Transaction failed! Error: ${error}`;
+    }
+
+    
+}
+
+function bondSaleStart() {
+    try {
+
+
+
+        contract.methods.bondSaleStart().send({ from: account })
+    .on('transactionHash', function(hash) {
+        console.log('Transaction Hash:', hash);
+        document.getElementById('txLink-start').textContent = hash;
+        document.getElementById('txLink-start').href = 'https://arbiscan.io/tx/' + hash;
+    })
+    .on('confirmation', function(confirmationNumber, receipt) {
+        console.log('Confirmation Number:', confirmationNumber);
+        document.getElementById('confirmation-start').textContent = `Transaction confirmed with confirmation number: ${confirmationNumber}`;
+        fetchAndRenderBonds().then(() => {});
+    })
+    .on('error', function(error, receipt) { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
+        console.log('Error:', error.message);
+        document.getElementById('error-start').textContent = `Transaction failed! Error: ${error}`;
+    })
+    } catch (error) {
+        document.getElementById('error-start').textContent = `Transaction failed! Error: ${error}`;
+    }
+
+    
+}
+
+function bondSaleClose() {
+    try {
+
+
+
+        contract.methods.bondSaleClose().send({ from: account })
+    .on('transactionHash', function(hash) {
+        console.log('Transaction Hash:', hash);
+        document.getElementById('txLink-close').textContent = hash;
+        document.getElementById('txLink-close').href = 'https://arbiscan.io/tx/' + hash;
+    })
+    .on('confirmation', function(confirmationNumber, receipt) {
+        console.log('Confirmation Number:', confirmationNumber);
+        document.getElementById('confirmation-close').textContent = `Transaction confirmed with confirmation number: ${confirmationNumber}`;
+        fetchAndRenderBonds().then(() => {});
+    })
+    .on('error', function(error, receipt) { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
+        console.log('Error:', error.message);
+        document.getElementById('error-close').textContent = `Transaction failed! Error: ${error}`;
+    })
+    } catch (error) {
+        document.getElementById('error-close').textContent = `Transaction failed! Error: ${error}`;
+    }
+
+    
+}
+
+
+
+document.addEventListener("DOMContentLoaded", async function() {
+    await fetchAndRenderBonds();
+});
+
