@@ -58,8 +58,22 @@ function bondSaleAdd() {
     price = new web3.utils.BN(price).div(new web3.utils.BN(Math.pow(10, 18 - tokenDecimals[selectedAsset]))).toString();
 
 
-    let duration = document.getElementById('duration').value;
-    duration = duration * 24 * 60 * 60; 
+    let durationDays = document.getElementById('durationDays').value;
+    durationDays = durationDays * 24 * 60 * 60; 
+    if (durationDays === '') {
+        durationDays = 0;
+    }
+
+    let durationSeconds = document.getElementById('durationSeconds').value;
+    if (durationSeconds === '') {
+        durationSeconds = 0;
+    }
+    
+    let duration = Number(durationDays)+ Number(durationSeconds);
+
+    if (duration === 0) {
+        throw new Error('Duration must be greater than 0');
+    }
 
     console.log('quoteTokenAddress:', quoteTokenAddress);
     console.log('volume:', volume);

@@ -44,7 +44,7 @@
                     <th>Price</th>
                     <th>Duration</th>
                     <th>Volume</th>
-                    <th>Status</th>
+                    <th>Sold</th>
                 </tr>
             </thead>
             <tbody id="stagingBondsTableBody">
@@ -98,8 +98,12 @@
                         </div>
                         <div class="form-group">
                             <label for="duration">Duration in days:</label>
-                            <input type="text" class="form-control" id="duration" placeholder="Enter the Duration">
+                            <input type="text" class="form-control" id="durationDays" placeholder="Enter the Days">
                         </div>
+                        <div class="form-group">
+                            <label for="duration">Duration in seconds:</label>
+                            <input type="text" class="form-control" id="durationSeconds" placeholder="Enter the Seconds">
+                        </div>                        
                         <div class="form-group">
                             <label for="volume">Volume in HDN .e.g 1000 = 1000 HDN:</label>
                             <input type="text" class="form-control" id="volume" placeholder="Enter the Volume">
