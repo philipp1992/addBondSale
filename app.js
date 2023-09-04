@@ -46,9 +46,11 @@ function renderActiveBonds(bonds) {
         // Assuming the structure [Bond ID, Contract Address, Price, Duration, Volume, Sold]
         bond.forEach((item, index) => {
             const td = document.createElement('td');
-            
+            if (index === 0) { 
+                td.textContent = String(item)
+            }
             // For Contract Address (index 1)
-            if (index === 1 && typeof item === 'string' && item.startsWith('0x')) {
+            else if (index === 1 && typeof item === 'string' && item.startsWith('0x')) {
                 const tokenName = Object.keys(tokenAddresses).find(key => tokenAddresses[key] === item);
                 const a = document.createElement('a');
                 a.href = `https://arbiscan.io/address/${item}`;
@@ -92,8 +94,11 @@ function renderInactiveBonds(bonds) {
         bond.forEach((item, index) => {
             const td = document.createElement('td');
             
+            if (index === 0) { 
+                td.textContent = String(item)
+            }
             // For Contract Address (index 1)
-            if (index === 1 && typeof item === 'string' && item.startsWith('0x')) {
+            else if (index === 1 && typeof item === 'string' && item.startsWith('0x')) {
                 const tokenName = Object.keys(tokenAddresses).find(key => tokenAddresses[key] === item);
                 const a = document.createElement('a');
                 a.href = `https://arbiscan.io/address/${item}`;
