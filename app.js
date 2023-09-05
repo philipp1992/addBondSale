@@ -24,7 +24,9 @@ const tokenAddresses = {
     'USDC': '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
     'USDT': '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
     'ARB': '0x912CE59144191C1204E64559FE8253a0e49E6548',
-    'WETH': '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1'
+    'WETH': '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+    'HDN': '0x3404149e9EE6f17Fb41DB1Ce593ee48FBDcD9506',
+    'HDN Bonds Contract': '0x15740F6057b5427C2155FdA85ed5E9AaAb3bF3e7'
 };
 
 const tokenDecimals = {
@@ -32,7 +34,8 @@ const tokenDecimals = {
     'USDT': 6,
     'USDC': 6,
     'ARB': 18,  
-    'WETH': 18
+    'WETH': 18,
+    'HDN': 18
 };
 
 function fromWei(value, decimals = 18) {
@@ -52,16 +55,21 @@ function renderAllowances(allowances) {
         allowance.forEach((item, index) => {
             const td = document.createElement('td');
             if (index === 0) {
-                td.textContent = item;
+                if (item === '0xd27be921b4749f7d0ef861212f6cf2ac3b06e4bddb6713f392a851cb8c9cf93a') {
+                    td.textContent = "withdraw"
+                }
+                else {
+                    td.textContent = item
+                }
             } else if (index === 1) {
-                const tokenName = Object.keys(tokenAddresses).find(key => tokenAddresses[key] === allowance[0]);
+                const tokenName = Object.keys(tokenAddresses).find(key => tokenAddresses[key] === item);
                 const a = document.createElement('a');
                 a.href = `https://arbiscan.io/address/${item}`;
                 a.target = "_blank";
                 a.textContent = tokenName || item; // Show the token name if found, otherwise show the address
                 td.appendChild(a);
             } else if (index === 2) {
-                const tokenName = Object.keys(tokenAddresses).find(key => tokenAddresses[key] === allowance[0]);
+                const tokenName = Object.keys(tokenAddresses).find(key => tokenAddresses[key] === item);
                 const a = document.createElement('a');
                 a.href = `https://arbiscan.io/address/${item}`;
                 a.target = "_blank";
