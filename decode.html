@@ -118,7 +118,17 @@
         console.log("selected abi:", selectedAbi.name);
 
         abiDecoder.addABI(treasuryAbi);
-        const decodedData = abiDecoder.decodeMethod(hexData);;
+        let encodedData;
+        try {
+            
+             decodedData = abiDecoder.decodeMethod(hexData);
+             if (decodedData === "" || hexData === "") {
+                document.getElementById('decodedData').innerHTML = "No data found";
+             }
+        } catch (error) {
+            
+            document.getElementById('decodedData').innerHTML = error;
+        }
 
 
         const name = decodedData["name"];
