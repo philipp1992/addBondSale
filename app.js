@@ -42,7 +42,36 @@ function fromWei(value, decimals = 18) {
     return value / (10 ** decimals);
 }
 
+const tokenDropdown = document.getElementById('token');
+for (let token in tokenDecimals) {
+    const option = document.createElement('option');
+    option.value = tokenDecimals[token];
+    option.textContent = `${token} (${tokenDecimals[token]} decimals)`;
+    tokenDropdown.appendChild(option);
+}
 
+function openModal() {
+    document.getElementById('converterModal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('converterModal').style.display = 'none';
+}
+
+function convert() {
+    const decimals = parseInt(document.getElementById('token').value);
+    const amount = parseFloat(document.getElementById('amount').value);
+    const direction = document.getElementById('direction').value;
+
+    let result = 0;
+    if (direction === "toWei") {
+        result = amount * (10 ** decimals);
+    } else {
+        result = amount / (10 ** decimals);
+    }
+
+    document.getElementById('result').value = result;
+}
 function secondsToDays(seconds) {
     return seconds / (24 * 60 * 60);
 }

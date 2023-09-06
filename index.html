@@ -1,108 +1,157 @@
 <!DOCTYPE html>
 <div lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <title>Bond Sale</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.2.9/dist/web3.min.js"></script>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <title>Bond Sale</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.2.9/dist/web3.min.js"></script>
 
-<div>
-    <div class="alert alert-primary" role="alert">
-        Bonds Contract Address: <a href="https://arbiscan.io/address/0x15740f6057b5427c2155fda85ed5e9aaab3bf3e7" target="_blank">0x15740f6057b5427c2155fda85ed5e9aaab3bf3e7</a>
-    </div>
-    <div class="alert alert-primary" role="alert">
-        Bond Treasury Contract Address: <a href="https://arbiscan.io/address/0x3a9104cf804039ead55e987556f3e647875fbe15" target="_blank">0x3a9104cf804039ead55e987556f3e647875fbe15</a>
-    </div>
+        <style>
+            .modal {
+                display: none;
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.7);
+                z-index: 1;
+            }
+
+            .modal-content {
+                background-color: #f4f4f4;
+                margin: 15% auto;
+                padding: 20px;
+                width: 30%;
+            }
+        </style>
+
+    </head>
+
+    <div>
+        <div class="alert alert-primary" role="alert">
+            Bonds Contract Address: <a href="https://arbiscan.io/address/0x15740f6057b5427c2155fda85ed5e9aaab3bf3e7"
+                target="_blank">0x15740f6057b5427c2155fda85ed5e9aaab3bf3e7</a>
+        </div>
+        <div class="alert alert-primary" role="alert">
+            Bond Treasury Contract Address: <a
+                href="https://arbiscan.io/address/0x3a9104cf804039ead55e987556f3e647875fbe15"
+                target="_blank">0x3a9104cf804039ead55e987556f3e647875fbe15</a>
+        </div>
+        <div class="alert alert-primary" role="alert">
+            <button onclick="openModal()">Open Decimal Converter</button>
+
+            <div id="converterModal" class="modal">
+                <div class="modal-content">
+                    <h2>Decimal & Wei Converter</h2>
+                    <label for="token">Choose a token:</label>
+                    <select id="token" onchange="convert()"></select>
+                    <br><br>
+                    <label for="amount">Enter amount:</label>
+                    <input type="number" id="amount" oninput="convert()">
+                    <br><br>
+                    <label>Direction:</label>
+                    <select id="direction" onchange="convert()">
+                        <option value="toWei">Decimal to Wei</option>
+                        <option value="fromWei">Wei to Decimal</option>
+                    </select>
+                    <br><br>
+                    <label>Result:</label>
+                    <input type="text" id="result" readonly>
+                    <br><br>
+                    <button onclick="closeModal()">Close</button>
+                </div>
+            </div>
 
 
+        </div>
 
-    
-
-    <h3 class="text-center mb-4">Allowances of Bonds Treasury</h3>
-    <div class="table-responsive">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Operation</th>
-                    <th>Token</th>
-                    <th>Receiver</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <tbody id="allowancesTableBody">
-            </tbody>
-        </table>
-    </div>
+            <h3 class="text-center mb-4">Allowances of Bonds Treasury</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Operation</th>
+                            <th>Token</th>
+                            <th>Receiver</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="allowancesTableBody">
+                    </tbody>
+                </table>
+            </div>
 
 
-    <h3 class="text-center mb-4">Active Bonds</h3>
-    <div class="table-responsive">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Contract Address</th>
-                    <th>Price</th>
-                    <th>Duration</th>
-                    <th>Volume</th>
-                    <th>Sold</th>
-                </tr>
-            </thead>
-            <tbody id="activeBondsTableBody">
-                <!-- Active Bonds will be rendered here -->
-            </tbody>
-        </table>
-    </div>
+            <h3 class="text-center mb-4">Active Bonds</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Contract Address</th>
+                            <th>Price</th>
+                            <th>Duration</th>
+                            <th>Volume</th>
+                            <th>Sold</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activeBondsTableBody">
+                        <!-- Active Bonds will be rendered here -->
+                    </tbody>
+                </table>
+            </div>
 
-    
-    <div class="container mt-5 "></div>
-        <h2 class="text-center mb-4">Bond Sale Close</h2>
-        <p class="text-center mb-4">All unsold bonds will be sent back to treasury</p>
-        <div class="row">
-            <div class="col-lg-6 mx-auto">
-                <div class="card p-4 shadow-sm">
-                    <form>
-                       
-                        <button type="button" class="btn btn-primary btn-block" onclick="bondSaleClose()">Close Bond Sale</button>
-                    </form>
 
-                    <div class="mt-4" id="txResult-close">
-                        <p>Transaction Hash: <a id="txLink-close" target="_blank" href="#">N/A</a></p>
+            <div class="container mt-5 "></div>
+            <h2 class="text-center mb-4">Bond Sale Close</h2>
+            <p class="text-center mb-4">All unsold bonds will be sent back to treasury</p>
+            <div class="row">
+                <div class="col-lg-6 mx-auto">
+                    <div class="card p-4 shadow-sm">
+                        <form>
+
+                            <button type="button" class="btn btn-primary btn-block" onclick="bondSaleClose()">Close Bond
+                                Sale</button>
+                        </form>
+
+                        <div class="mt-4" id="txResult-close">
+                            <p>Transaction Hash: <a id="txLink-close" target="_blank" href="#">N/A</a></p>
+                        </div>
+
+                        <div class="mt-2 text-success" id="confirmation-close"></div>
+                        <div class="mt-2 text-danger" id="error-close"></div>
                     </div>
-
-                    <div class="mt-2 text-success" id="confirmation-close"></div>
-                    <div class="mt-2 text-danger" id="error-close"></div>
                 </div>
             </div>
         </div>
-    </div>
 
 
-    <div class="container mt-5 ">
-        <h2 class="text-center mb-4">Bond Sale New</h2>
-        <div class="row">
-            <div class="col-lg-6 mx-auto">
-                <div class="card p-4 shadow-sm">
-                    <form>
-                       
-                        <button type="button" class="btn btn-primary btn-block" onclick="bondSaleNew()">New Bond Sale</button>
-                    </form>
+        <div class="container mt-5 ">
+            <h2 class="text-center mb-4">Bond Sale New</h2>
+            <div class="row">
+                <div class="col-lg-6 mx-auto">
+                    <div class="card p-4 shadow-sm">
+                        <form>
 
-                    <div class="mt-4" id="txResult-new">
-                        <p>Transaction Hash: <a id="txLink-new" target="_blank" href="#">N/A</a></p>
+                            <button type="button" class="btn btn-primary btn-block" onclick="bondSaleNew()">New Bond
+                                Sale</button>
+                        </form>
+
+                        <div class="mt-4" id="txResult-new">
+                            <p>Transaction Hash: <a id="txLink-new" target="_blank" href="#">N/A</a></p>
+                        </div>
+
+                        <div class="mt-2 text-success" id="confirmation-new"></div>
+                        <div class="mt-2 text-danger" id="error-new"></div>
                     </div>
-
-                    <div class="mt-2 text-success" id="confirmation-new"></div>
-                    <div class="mt-2 text-danger" id="error-new"></div>
                 </div>
             </div>
         </div>
-    </div>
 
 
-    <div class="container mt-5 "></div>
+        <div class="container mt-5 "></div>
         <h2 class="text-center mb-4">Bond Sale Add</h2>
         <div class="row">
             <div class="col-lg-6 mx-auto">
@@ -129,13 +178,15 @@
                         </div>
                         <div class="form-group">
                             <label for="duration">Duration in seconds:</label>
-                            <input type="text" class="form-control" id="durationSeconds" placeholder="Enter the Seconds">
-                        </div>                        
+                            <input type="text" class="form-control" id="durationSeconds"
+                                placeholder="Enter the Seconds">
+                        </div>
                         <div class="form-group">
                             <label for="volume">Volume in HDN .e.g 1000 = 1000 HDN:</label>
                             <input type="text" class="form-control" id="volume" placeholder="Enter the Volume">
                         </div>
-                        <button type="button" class="btn btn-primary btn-block" onclick="bondSaleAdd()">Add Bond Sale</button>
+                        <button type="button" class="btn btn-primary btn-block" onclick="bondSaleAdd()">Add Bond
+                            Sale</button>
                     </form>
 
                     <div class="mt-4" id="txResult-add">
@@ -167,31 +218,32 @@
         </table>
     </div>
     <div class="container mt-5 "></div>
-        <h2 class="text-center mb-4">Bond Sale Start</h2>
-        <p class="text-center mb-4" > Prepared Bonds will go live </p>
-        <div class="row">
-            <div class="col-lg-6 mx-auto">
-                <div class="card p-4 shadow-sm">
-                    <form>
-                       
-                        <button type="button" class="btn btn-primary btn-block" onclick="bondSaleStart()">Start Bond Sale</button>
-                    </form>
+    <h2 class="text-center mb-4">Bond Sale Start</h2>
+    <p class="text-center mb-4"> Prepared Bonds will go live </p>
+    <div class="row">
+        <div class="col-lg-6 mx-auto">
+            <div class="card p-4 shadow-sm">
+                <form>
 
-                    <div class="mt-4" id="txResult-start">
-                        <p>Transaction Hash: <a id="txLink-start" target="_blank" href="#">N/A</a></p>
-                    </div>
+                    <button type="button" class="btn btn-primary btn-block" onclick="bondSaleStart()">Start Bond
+                        Sale</button>
+                </form>
 
-                    <div class="mt-2 text-success" id="confirmation-start"></div>
-                    <div class="mt-2 text-danger" id="error-start"></div>
+                <div class="mt-4" id="txResult-start">
+                    <p>Transaction Hash: <a id="txLink-start" target="_blank" href="#">N/A</a></p>
                 </div>
+
+                <div class="mt-2 text-success" id="confirmation-start"></div>
+                <div class="mt-2 text-danger" id="error-start"></div>
             </div>
         </div>
     </div>
+</div>
 
 
-    
 
-    <script src="app.js"></script>
+
+<script src="app.js"></script>
 </body>
 
 </html>
