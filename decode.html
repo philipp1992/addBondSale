@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.3.5/dist/web3.min.js"></script>
+    <script src="bower_components/abi-decoder/dist/abi-decoder.js"></script>
+    <title>Decode Hex Data</title>
+</head>
+
+<body class="container mt-5">
+    <h2>Decode Multisig Transaction Data</h2>
+
+    <form id="decodeForm">
+
+
+        <div class="mb-3">
+            <label for="contractDropDown" class="form-label">Contract</label>
+            <select class="form-control" id="contractDropDown"></select>
+        </div>
+
+        <div class="mb-3">
+            <label for="hexData" class="form-label">Hex Data</label>
+            <input type="text" class="form-control" id="hexData"
+                placeholder="0xa6fb97d1d27be921b4749f7d0ef861212f6cf2ac3b06e4bddb6713f392a851cb8c9cf93a000000000000000000000000fd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb900000000000000000000000000000000000000000000000000000000000186a0">
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick="decodeData()">Decode</button>
+    </form>
+
+    <div id="decodedData" class="mt-4"></div>
+</body>
+
+
+<script>
+    const web3 = new Web3();
+
+
+    const treasuryAbi = [{ "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "inputs": [{ "internalType": "bytes32", "name": "operation", "type": "bytes32" }, { "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "allowance", "type": "uint256" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "InsufficientAllowance", "type": "error" }, { "inputs": [{ "internalType": "address", "name": "token", "type": "address" }, { "internalType": "uint256", "name": "balance", "type": "uint256" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "InsufficientBalance", "type": "error" }, { "inputs": [{ "internalType": "address", "name": "requestedElevator", "type": "address" }], "name": "NotAdmin", "type": "error" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "previousAdmin", "type": "address" }, { "indexed": false, "internalType": "address", "name": "newAdmin", "type": "address" }], "name": "AdminChanged", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "approver", "type": "address" }, { "indexed": false, "internalType": "bytes32", "name": "operation", "type": "bytes32" }, { "indexed": false, "internalType": "address", "name": "token", "type": "address" }, { "indexed": false, "internalType": "address", "name": "spender", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "AllowanceApproved", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "revoker", "type": "address" }, { "indexed": false, "internalType": "bytes32", "name": "operation", "type": "bytes32" }, { "indexed": false, "internalType": "address", "name": "token", "type": "address" }, { "indexed": false, "internalType": "address", "name": "spender", "type": "address" }], "name": "AllowanceRevoked", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "beacon", "type": "address" }], "name": "BeaconUpgraded", "type": "event" }, { "anonymous": false, "inputs": [], "name": "DefaultAdminDelayChangeCanceled", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint48", "name": "newDelay", "type": "uint48" }, { "indexed": false, "internalType": "uint48", "name": "effectSchedule", "type": "uint48" }], "name": "DefaultAdminDelayChangeScheduled", "type": "event" }, { "anonymous": false, "inputs": [], "name": "DefaultAdminTransferCanceled", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "newAdmin", "type": "address" }, { "indexed": false, "internalType": "uint48", "name": "acceptSchedule", "type": "uint48" }], "name": "DefaultAdminTransferScheduled", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint8", "name": "version", "type": "uint8" }], "name": "Initialized", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "account", "type": "address" }], "name": "Paused", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "bytes32", "name": "role", "type": "bytes32" }, { "indexed": true, "internalType": "bytes32", "name": "previousAdminRole", "type": "bytes32" }, { "indexed": true, "internalType": "bytes32", "name": "newAdminRole", "type": "bytes32" }], "name": "RoleAdminChanged", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "bytes32", "name": "role", "type": "bytes32" }, { "indexed": true, "internalType": "address", "name": "account", "type": "address" }, { "indexed": true, "internalType": "address", "name": "sender", "type": "address" }], "name": "RoleGranted", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "bytes32", "name": "role", "type": "bytes32" }, { "indexed": true, "internalType": "address", "name": "account", "type": "address" }, { "indexed": true, "internalType": "address", "name": "sender", "type": "address" }], "name": "RoleRevoked", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "account", "type": "address" }], "name": "Unpaused", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "implementation", "type": "address" }], "name": "Upgraded", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "recipient", "type": "address" }, { "indexed": false, "internalType": "bytes32", "name": "operation", "type": "bytes32" }, { "indexed": false, "internalType": "address", "name": "token", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "Withdrawal", "type": "event" }, { "inputs": [], "name": "ADMIN_ROLE", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "DEFAULT_ADMIN_ROLE", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "MANAGER_ROLE", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "OPERATOR_ROLE", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "OP_BONDS", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "PAUSER_ROLE", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "UPGRADER_ROLE", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "acceptDefaultAdminTransfer", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "ix", "type": "uint256" }], "name": "allowance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "operation", "type": "bytes32" }, { "internalType": "address", "name": "token", "type": "address" }], "name": "allowance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "operation", "type": "bytes32" }, { "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "spender", "type": "address" }], "name": "allowance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "allowances", "outputs": [{ "components": [{ "internalType": "bytes32", "name": "operation", "type": "bytes32" }, { "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "internalType": "struct Treasury.Allowance[]", "name": "", "type": "tuple[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "operation", "type": "bytes32" }, { "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "approve", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "newAdmin", "type": "address" }], "name": "beginDefaultAdminTransfer", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "cancelDefaultAdminTransfer", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint48", "name": "newDelay", "type": "uint48" }], "name": "changeDefaultAdminDelay", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "defaultAdmin", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "defaultAdminDelay", "outputs": [{ "internalType": "uint48", "name": "", "type": "uint48" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "defaultAdminDelayIncreaseWait", "outputs": [{ "internalType": "uint48", "name": "", "type": "uint48" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "defaultElevationDuration", "outputs": [{ "internalType": "uint48", "name": "", "type": "uint48" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "role", "type": "bytes32" }, { "internalType": "address", "name": "elevatedAddress", "type": "address" }, { "internalType": "uint256", "name": "duration", "type": "uint256" }], "name": "elevate", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "role", "type": "bytes32" }, { "internalType": "address", "name": "elevatedAddress", "type": "address" }], "name": "elevate", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "role", "type": "bytes32" }], "name": "getRoleAdmin", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "role", "type": "bytes32" }, { "internalType": "uint256", "name": "index", "type": "uint256" }], "name": "getRoleMember", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "role", "type": "bytes32" }], "name": "getRoleMemberCount", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "role", "type": "bytes32" }, { "internalType": "address", "name": "account", "type": "address" }], "name": "grantRole", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "role", "type": "bytes32" }, { "internalType": "address", "name": "account", "type": "address" }], "name": "hasRole", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "housekeeping", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "admin", "type": "address" }], "name": "initialize", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "owner", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "pause", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "paused", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "pendingDefaultAdmin", "outputs": [{ "internalType": "address", "name": "newAdmin", "type": "address" }, { "internalType": "uint48", "name": "schedule", "type": "uint48" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "pendingDefaultAdminDelay", "outputs": [{ "internalType": "uint48", "name": "newDelay", "type": "uint48" }, { "internalType": "uint48", "name": "schedule", "type": "uint48" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "proxiableUUID", "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "role", "type": "bytes32" }, { "internalType": "address", "name": "account", "type": "address" }], "name": "renounceRole", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "role", "type": "bytes32" }, { "internalType": "address", "name": "admin", "type": "address" }, { "internalType": "uint256", "name": "duration", "type": "uint256" }], "name": "requestElevation", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "role", "type": "bytes32" }, { "internalType": "address", "name": "admin", "type": "address" }], "name": "requestElevation", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "operation", "type": "bytes32" }, { "internalType": "address", "name": "token", "type": "address" }, { "internalType": "address", "name": "spender", "type": "address" }], "name": "revoke", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "role", "type": "bytes32" }, { "internalType": "address", "name": "account", "type": "address" }], "name": "revokeRole", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "rollbackDefaultAdminDelay", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint48", "name": "duration", "type": "uint48" }], "name": "setDefaultElevationDuration", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "bytes4", "name": "interfaceId", "type": "bytes4" }], "name": "supportsInterface", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "unpause", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "newImplementation", "type": "address" }], "name": "upgradeTo", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "newImplementation", "type": "address" }, { "internalType": "bytes", "name": "data", "type": "bytes" }], "name": "upgradeToAndCall", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "operation", "type": "bytes32" }, { "internalType": "address", "name": "token", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "withdraw", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }]
+
+    
+
+    const abiMap = [
+        {
+            name: 'Treasury',
+            abi: treasuryAbi
+        },
+        {
+            name: 'Bonds',
+            abi: treasuryAbi
+        }
+    ]
+    function populateContractDropdown() {
+        const dropdown = document.getElementById('contractDropDown');
+
+        // Clear previous options
+        dropdown.innerHTML = '';
+
+        abiMap.forEach(contract => {
+            const option = document.createElement('option');
+            option.value = contract.name; // use the name as the value
+            option.textContent = contract.name; // use the name as the display text
+            dropdown.appendChild(option);
+        });
+    }
+
+    // Call the function to populate the dropdown when the page loads
+    window.onload = populateContractDropdown;
+
+
+    function fromWei(value, decimals = 18) {
+    return value / (10 ** decimals);
+}
+    function getTokenName(address) {
+        const tokenAddresses = {
+            'DAI': '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
+            'USDC': '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+            'USDT': '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
+            'ARB': '0x912CE59144191C1204E64559FE8253a0e49E6548',
+            'WETH': '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+            'HDN': '0x3404149e9EE6f17Fb41DB1Ce593ee48FBDcD9506',
+            'HDN Bonds Contract': '0x15740F6057b5427C2155FdA85ed5E9AaAb3bF3e7',
+            'HDN Bonds Treasury': '',
+            'HDN Multisig': '',
+            'HDN Vault': ''
+
+        };
+        return Object.keys(tokenAddresses).find(key => tokenAddresses[key].toLowerCase() === address.toLowerCase());
+    }
+
+    function getTokenDecimals(name) {
+        const tokenDecimals = {
+            'DAI': 18,
+            'USDT': 6,
+            'USDC': 6,
+            'ARB': 18,
+            'WETH': 18,
+            'HDN': 18
+        };
+
+        return tokenDecimals[name.toUpperCase()];
+    }
+
+
+    function decodeData() {
+
+        const hexData = document.getElementById('hexData').value;
+        const selectedContract = document.getElementById('contractDropDown').value;
+
+
+
+
+
+        const selectedAbi = abiMap.find(abi => abi.name === selectedContract);
+
+        console.log("selected abi:", selectedAbi.name);
+
+        abiDecoder.addABI(treasuryAbi);
+        const decodedData = abiDecoder.decodeMethod(hexData);;
+
+
+        const name = decodedData["name"];
+        const params = decodedData["params"];
+        let tokenName = "";
+        let decimals = 0;
+        let functionName = "";
+        let operation = "";
+        let tokenAddress = "";
+        for (let i = 0; i < params.length; i++) {
+            const param = params[i];
+            console.log("param:", param);
+   
+            
+            if (param.name === "token") {
+                tokenAddress = param.value;
+                console.log("token address:", tokenAddress);
+                tokenName = getTokenName(tokenAddress);
+                decimals = getTokenDecimals(tokenName);
+                console.log("decimals:", decimals);
+                console.log("token name:", tokenName);
+
+            } else if (param.name === "operation") {
+                console.log("operation:", param.value);
+                operation = param.value;
+            } else if (param.name === "amount") {
+               
+             
+          
+                amount = fromWei(param.value, decimals);
+                console.log("amount:", amount);
+            }
+
+        }
+
+        const output = `
+        <strong>Function Name:</strong> ${name}<br>
+        <strong>Amount:</strong> ${amount}<br>
+        <strong>Token Name:</strong> ${tokenName}<br>
+        <strong>Decimals:</strong> ${decimals}<br>
+        <strong>Contract Address:</strong> ${tokenAddress}<br>
+    `;
+
+    document.getElementById('decodedData').innerHTML = output;
+
+    }
+</script>
