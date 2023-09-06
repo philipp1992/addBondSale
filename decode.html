@@ -128,6 +128,7 @@
         let functionName = "";
         let operation = "";
         let tokenAddress = "";
+        let spender = "not applicable";
         for (let i = 0; i < params.length; i++) {
             const param = params[i];
             console.log("param:", param);
@@ -151,15 +152,21 @@
                 amount = fromWei(param.value, decimals);
                 console.log("amount:", amount);
             }
+            else if (param.name === "spender"){
+                spender = param.value;
+                console.log("spender:", spender);
+            }
 
         }
 
         const output = `
         <strong>Function Name:</strong> ${name}<br>
+        <strong>Operation Name:</strong> ${operation}<br>
         <strong>Amount:</strong> ${amount}<br>
         <strong>Token Name:</strong> ${tokenName}<br>
         <strong>Decimals:</strong> ${decimals}<br>
         <strong>Contract Address:</strong> ${tokenAddress}<br>
+        <strong>Spender Address:</strong> ${spender}<br>
     `;
 
     document.getElementById('decodedData').innerHTML = output;
