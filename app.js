@@ -51,8 +51,13 @@ function renderAllowances(allowances) {
     console.log('allowances:', allowances);
     const tbody = document.getElementById('allowancesTableBody');
     allowances.forEach(allowance => {
+       
         const tr = document.createElement('tr');
+        let token = "";
+        let decimals = 18;
         allowance.forEach((item, index) => {
+      
+          
             const td = document.createElement('td');
             if (index === 0) {
                 if (item === '0xd27be921b4749f7d0ef861212f6cf2ac3b06e4bddb6713f392a851cb8c9cf93a') {
@@ -62,14 +67,18 @@ function renderAllowances(allowances) {
                     td.textContent = item
                 }
             } else if (index === 1) {
-                const tokenName = Object.keys(tokenAddresses).find(key => tokenAddresses[key] === item);
+                token = Object.keys(tokenAddresses).find(key => tokenAddresses[key] === item);
+                decimals = tokenDecimals[token];
+                token = token || item;
+                
                 const a = document.createElement('a');
                 a.href = `https://arbiscan.io/address/${item}`;
                 a.target = "_blank";
-                a.textContent = tokenName || item; // Show the token name if found, otherwise show the address
+                a.textContent = token || item; // Show the token name if found, otherwise show the address
                 td.appendChild(a);
             } else if (index === 2) {
                 const tokenName = Object.keys(tokenAddresses).find(key => tokenAddresses[key] === item);
+              
                 const a = document.createElement('a');
                 a.href = `https://arbiscan.io/address/${item}`;
                 a.target = "_blank";
@@ -77,7 +86,9 @@ function renderAllowances(allowances) {
                 td.appendChild(a);
             } 
             else {
-                td.textContent = fromWei(item);
+                console.log('item:', item);
+
+                td.textContent = fromWei(item, decimals);
             }
             tr.appendChild(td);
         });
@@ -215,7 +226,7 @@ async function fetchInactiveBonds() {
         const bonds = await contract.methods.bondSaleViewStaging().call();
         return bonds;
     } catch (error) {
-        console.error("Error fetching bonds:", error);
+        console.error("Error fetching staging bonds:", error);
         return [];
     }
 }
@@ -374,8 +385,9 @@ function bondSaleClose() {
 
 
 document.addEventListener("DOMContentLoaded", async function() {
-    await fetchAndRenderBonds();
     const allowances = await fetchAllowances();
+    console.log('allowances:', allowances);
     renderAllowances(allowances);
+    await fetchAndRenderBonds();
 });
 
