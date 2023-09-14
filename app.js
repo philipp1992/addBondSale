@@ -254,7 +254,10 @@ function renderMaturingBonds(bonds) {
 
                 case 3: // maturation (epoch timestamp of when the bond was created)
 
-                    td.textContent = new Date((Number(item) + Number(bond[7])) * 1000);
+                    const maturity = Number(item);
+
+                    td.textContent = new Date(maturity * 1000);
+
                     break;
 
                 case 4: // amount
