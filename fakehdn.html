@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embed Iframe with Overlay Button</title>
+    <style>
+        /* Container holding iframe and button */
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* For 16:9 aspect ratio. Adjust as needed */
+        }
+
+        /* Full-width iframe */
+        .iframe-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Overlay button */
+        .overlay-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .overlay-button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="iframe-container">
+        <iframe src="https://hydranet.ai"></iframe>
+        <button class="overlay-button">Claim your Aidrop</button>
+    </div>
+
+</body>
+
+</html>
